@@ -3,15 +3,6 @@
 __author__ = 'User1'
 
 import socket
-import Tkinter
-
-top = Tkinter.Tk()
-
-L1 = Tkinter.Label(top, text="User Name")
-L1.pack(side = Tkinter.LEFT )
-E1 = Tkinter.Entry(top, db = 5)
-
-E1.pack(side = Tkinter.RIGHT)
 
 top.mainloop()
 

@@ -1,22 +1,33 @@
+#!/usr/bin/python
+
 __author__ = 'User1'
 
 import socket
+import Tkinter
 
-# create a socket object
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+top = Tkinter.Tk()
 
-# get local machine name
+L1 = Tkinter.Label(top, text="User Name")
+L1.pack(side = Tkinter.LEFT )
+E1 = Tkinter.Entry(top, db = 5)
+
+E1.pack(side = Tkinter.RIGHT)
+
+top.mainloop()
+
 host = socket.gethostname()
 
-# use the server port to connect to the server process
+# the port the server is listening on
 port = 9999
 
-# connection to hostname on the port.
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 s.connect((host, port))
 
-# Receive no more than 1024 bytes
-tm = s.recv(1024)
+s.sendall(b'Hello, world')
+
+data = s.recv(1024)
 
 s.close()
 
-print("The time got from the server is %s" % tm.decode('ascii'))
+print('Received', repr(data))

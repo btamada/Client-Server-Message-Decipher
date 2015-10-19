@@ -1,29 +1,22 @@
 __author__ = 'User1'
 
 import socket
-import time
 
-# create a socket object
-serversocket = socket.socket(
-	        socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# get local machine name
-host = socket.gethostname()
+s.bind((socket.gethostname(), 9999))
 
-# choose a port for the server to listen on
-port = 9999
+s.listen(5)
 
-# bind to the port
-serversocket.bind((host, port))
+conn, addr = s.accept()
 
-# queue up to 5 requests
-serversocket.listen(5)
+print('Establishing a connection on (host/IP, port) - ', addr)
 
 while True:
-    # establish a connection
-    clientsocket,addr = serversocket.accept()
+    data = conn.recv(1024)
+    if not data: break
 
-    print("Got a connection from %s" % str(addr))
-    currentTime = time.ctime(time.time()) + "\r\n"
-    clientsocket.send(currentTime.encode('ascii'))
-    clientsocket.close()
+    conn.sendall(data)
+
+# close the socket
+conn.close()

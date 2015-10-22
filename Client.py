@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-__author__ = 'Bryan Tamada'
-
+from tkinter import *
 from Crypto.Cipher import AES
 import socket
 
@@ -15,20 +14,47 @@ def decrypt(cipher):
     plain_text = decryption_suite.decrypt(cipher)
     return plain_text
 
-# create the socket
-mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def sendMsgtoSvr():
+    # create the socket
+    mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# connect to the server
-mysocket.connect((socket.gethostname(), 12345))
+    # connect to the server
+    mysocket.connect((socket.gethostname(), 12345))
 
-# send the message to the server
-mysocket.sendall(encrypt("This my secretss"))
 
-# receive and store the response from the server in 1024 bit chunks
-server_response = mysocket.recv(1024)
+    # send the message to the server
+    mysocket.sendall(encrypt(encryptTxtBox.get()))
 
-# close the socket
-mysocket.close()
+    # receive and store the response from the server in 1024 bit chunks
+    server_response = mysocket.recv(1024)
 
-# print out the server response message
-print('Received response from server %s' % decrypt(server_response).decode('ascii'))
+    # set the result label to the server response
+    result.set(decrypt(server_response).decode('ascii'))
+
+    # close the socket
+    mysocket.close()
+
+
+# ======= START PROGRAM =======
+
+# Client GUI
+root = Tk()
+frame = Frame(root)
+frame.pack()
+
+encryptLbl = Label(root, text="Secret Message:")
+encryptLbl.pack(side=LEFT)
+
+encryptTxtBox = Entry(root, bd=5)
+encryptTxtBox.pack(side=LEFT)
+
+result = StringVar()
+resultLbl = Label(root, textvariable=result, relief=RAISED)
+resultLbl.pack(side=LEFT)
+
+encryptBtn = Button(root, text="Send to Server", command=sendMsgtoSvr)
+encryptBtn.pack(side=LEFT)
+
+root.mainloop()
+
+# ======= END PROGRAM =======

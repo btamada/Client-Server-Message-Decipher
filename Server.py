@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-__author__ = 'Bryan Tamada'
-
 from Crypto.Cipher import AES
 import socket
 
@@ -14,6 +12,16 @@ def decrypt(cipher):
     decryption_suite = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
     plain_text = decryption_suite.decrypt(cipher)
     return plain_text
+
+def decipher(plain_text):
+    # insert algorithm to decipher the plain_text
+
+
+
+    # return the resulting text
+    decipher_text = "this is the result"
+    return decipher_text
+
 
 # create the socket
 mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,12 +40,14 @@ print('Connected to', addr)
 # receive the secret message from the client in 1024 blocks
 client_msg = conn.recv(1024)
 
+# decrypt the client message
 plain_text = decrypt(client_msg)
 
-print('The server received the message %s' % plain_text.decode('ascii'))
+#decipher the client message
+decipher_text = decipher(plain_text)
 
 # send the message back to the client
-conn.sendall(encrypt(plain_text))
+conn.sendall(encrypt(decipher_text))
 
 # close the socket
 conn.close()

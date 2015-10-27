@@ -2,6 +2,7 @@
 
 from Crypto.Cipher import AES
 import socket
+import marisa_trie
 
 def encrypt(secret):
     encryption_suite = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
@@ -15,12 +16,17 @@ def decrypt(cipher):
 
 def decipher(plain_text):
     # insert algorithm to decipher the plain_text
-
-
+    trie[str(plain_text, 'utf-8')]
 
     # return the resulting text
     decipher_text = "this is the result"
     return decipher_text
+
+# Create the Trie Data Structure
+keys = [u'a', u'b', u'c', u'd', u'e', u'f']
+values = ["Allison", "Bryan", "Cindy", "Darryl", "Edward", "Frank"]
+fmt = "<HH"
+trie = marisa_trie.RecordTrie(fmt, zip(keys, values))
 
 
 # create the socket

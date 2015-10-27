@@ -3,6 +3,7 @@
 from tkinter import *
 from Crypto.Cipher import AES
 import socket
+import sys
 
 def encrypt(secret):
     encryption_suite = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
@@ -22,23 +23,26 @@ def sendMsgtoSvr():
     result.set(decrypt(server_response).decode('ascii'))
     mysocket.close()
 
+def quitProgram():
+    root.destroy()
 
 # Client GUI
 root = Tk()
-frame = Frame(root)
-frame.pack()
 
 encryptLbl = Label(root, text="Secret Message:")
-encryptLbl.pack(side=LEFT)
-
 encryptTxtBox = Entry(root, bd=5)
-encryptTxtBox.pack(side=LEFT)
 
 result = StringVar()
 resultLbl = Label(root, textvariable=result, relief=RAISED)
-resultLbl.pack(side=LEFT)
 
 encryptBtn = Button(root, text="Send to Server", command=sendMsgtoSvr)
-encryptBtn.pack(side=LEFT)
+
+quitBtn = Button(root, text="Quit", command=quitProgram)
+
+encryptLbl.grid(row=0, column=0)
+encryptTxtBox.grid(row=0, column=1)
+encryptBtn.grid(row=1, column=0)
+quitBtn.grid(row=1, column=1)
+resultLbl.grid(columnspan=2)
 
 root.mainloop()

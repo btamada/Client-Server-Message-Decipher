@@ -15,27 +15,13 @@ def decrypt(cipher):
     return plain_text
 
 def sendMsgtoSvr():
-    # create the socket
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # connect to the server
     mysocket.connect((socket.gethostname(), 12345))
-
-
-    # send the message to the server
     mysocket.sendall(encrypt(encryptTxtBox.get()))
-
-    # receive and store the response from the server in 1024 bit chunks
-    server_response = mysocket.recv(1024)
-
-    # set the result label to the server response
+    server_response = mysocket.recv(1024) # receive and store the response from the server in 1024 bit chunks
     result.set(decrypt(server_response).decode('ascii'))
-
-    # close the socket
     mysocket.close()
 
-
-# ======= START PROGRAM =======
 
 # Client GUI
 root = Tk()
@@ -56,5 +42,3 @@ encryptBtn = Button(root, text="Send to Server", command=sendMsgtoSvr)
 encryptBtn.pack(side=LEFT)
 
 root.mainloop()
-
-# ======= END PROGRAM =======

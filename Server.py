@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from Crypto.Cipher import AES
 import socket
-import marisa_trie
+from Crypto.Cipher import AES
+from marisa_trie import RecordTrie
 
 def encrypt(secret):
     encryption_suite = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
@@ -26,7 +26,7 @@ def decipher(plain_text):
 keys = [u'a', u'b', u'c', u'd', u'e', u'f']
 values = ["Allison", "Bryan", "Cindy", "Darryl", "Edward", "Frank"]
 fmt = "<HH"
-trie = marisa_trie.RecordTrie(fmt, zip(keys, values))
+trie = RecordTrie.RecordTrie(fmt, zip(keys, values))
 
 
 # create the socket

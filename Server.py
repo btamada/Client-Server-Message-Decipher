@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import socket
+import sys
 from Crypto.Cipher import AES
 from marisa_trie import Trie
 
@@ -15,6 +16,9 @@ def decrypt(cipher):
     return plain_text
 
 def decipher(plain_text):
+
+    if(plain_text == ""):
+        return plain_text
 
     decipher_text = ""
 
@@ -36,22 +40,19 @@ def decipher(plain_text):
 trie = Trie([u'this', u'is', u'a', u'test', u'testicular', u'apple', u'istanbul',
              u'thisser', u'secret', u'message', u'massage'])
 
-mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-mysocket.bind((socket.gethostname(), 12345))
-
-mysocket.listen(1)
-
-conn, addr = mysocket.accept()
-
-print('Connected to', addr)
-
-client_msg = conn.recv(1024)
-
-plain_text = decrypt(client_msg)
-
-decipher_text = decipher(str(plain_text))
-
-conn.sendall(encrypt(decipher_text))
-
-conn.close()
+try:
+    mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    mysocket.bind((socket.gethostname(), 12345))
+    mysocket.listen(1)
+    conn, addr = mysocket.accept()
+    print('Connected to', addr)
+    client_msg = conn.recv(1024)
+    if not client_msg:
+        sys.exit(1)
+    plain_text = decrypt(client_msg)
+    decipher_text = decipher(str(plain_text))
+    conn.sendall(encrypt(decipher_text))
+    conn.close()
+except socket.error as e:
+    print(e)
+    sys.exit(1)

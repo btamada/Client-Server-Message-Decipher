@@ -20,7 +20,8 @@ def sendMsgtoSvr():
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         mysocket.connect((socket.gethostname(), 12345))
         mysocket.sendall(encrypt(encryptTxtBox.get()))
-        server_response = mysocket.recv(1024) # receive and store the response from the server in 1024 bit chunks
+        mysocket.setblocking(0)
+        server_response = mysocket.recv(4096) # receive and store the response from the server in 1024 bit chunks
         result.set(decrypt(server_response).decode('ascii'))
         mysocket.close()
     except (socket.error, socket.timeout) as e:

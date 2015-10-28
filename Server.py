@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-import socket
-import sys
+import socket, errno, time
 from Crypto.Cipher import AES
 from marisa_trie import Trie
 
@@ -17,19 +16,19 @@ def decrypt(cipher):
 
 def decipher(plain_text):
 
-    if(plain_text == ""):
-        return plain_text
+    if not plain_text:
+        return "ERROR"
 
-    decipher_text = ""
+    decipher_list = []
 
-    # insert algorithm to decipher the plain_text
-    text_list = plain_text.split()
-
-    for text in text_list:
+    for text in plain_text:
         if(text in trie):
-            decipher_text += str(trie.prefixes(text))
+            decipher_list += trie.prefixes(text)
 
-    # Pad the decipher text to make it a multiple of 16 in length
+    decipher_text = " ".join(decipher_list)
+
+    # Pad the decipher text with spaces until its length
+    # is a multiple of 16 to send back via the socket to the client
     if(len(decipher_text) % 16 != 0):
         while(len(decipher_text) % 16 != 0):
             decipher_text += " "
@@ -38,23 +37,30 @@ def decipher(plain_text):
 
 # Create the Trie Data Structure
 trie = Trie([u'this', u'is', u'a', u'test', u'testicular', u'apple', u'istanbul',
-             u'thisser', u'secret', u'message', u'massage'])
+             u'thisser', u'secret', u'message', u'massage', u'hello'])
+
+mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+mysocket.bind((socket.gethostname(), 12345))
+mysocket.listen(1)
+conn, addr = mysocket.accept()
+print('Connected to', addr)
 
 while True:
     try:
-        mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        mysocket.bind((socket.gethostname(), 12345))
-        mysocket.listen(10)
-        conn, addr = mysocket.accept()
-        print('Connected to', addr)
-        mysocket.setblocking(0)
         client_msg = conn.recv(4096)
         if not client_msg:
+            conn.close()
             break
-        plain_text = decrypt(client_msg)
-        decipher_text = decipher(str(plain_text))
-        conn.sendall(encrypt(decipher_text))
-        conn.close()
+        else:
+            plain_text = str(decrypt(client_msg).decode('ascii'))
+            list_plain_text = plain_text.split(" ")
+            decipher_text = decipher(list_plain_text)
+            conn.sendall(encrypt(decipher_text))
+            mysocket.close()
+            conn.close()
+            break
     except (socket.error, socket.timeout) as e:
-        print(e)
-        sys.exit(1)
+            print(e)
+            mysocket.close()
+            conn.close()
+            break
